@@ -94,7 +94,7 @@ LeCore.getCertificate(options, cb)            // returns (err, pems={ key, cert,
     , setChallenge: fn (hostname, key, val, cb)
     , removeChallenge: fn (hostname, key, cb)
     }
-    
+
 // Discovery URLs
 LeCore.getAcmeUrls(acmeDiscoveryUrl, cb)      // returns (err, acmeUrls={newReg,newAuthz,newCert,revokeCert})
 ```
@@ -138,7 +138,7 @@ For testing and development, you can also inject the dependencies you want to us
 ```javascript
 LeCore = LeCore.create({
   request: require('request')
-, leCrypto: rquire('./lib/letsencrypt-forge')
+, RSA: rquire('rsa-compat').RSA
 });
 
 // now uses node `request` (could also use jQuery or Angular in the browser)
