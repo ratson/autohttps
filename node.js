@@ -26,8 +26,6 @@ function create(deps) {
   LeCore.registerNewAccount = require('./lib/register-new-account').create(deps);
   LeCore.getCertificate = require('./lib/get-certificate').create(deps);
 
-  LeCore.leCrypto = deps.leCrypto;
-
   return LeCore;
 }
 
