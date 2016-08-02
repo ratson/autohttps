@@ -84,7 +84,7 @@ LeCore.registerNewAccount(options, cb)        // returns "regr" registration dat
     }
 
 // Registration
-LeCore.getCertificate(options, cb)            // returns (err, pems={ key, cert, ca })
+LeCore.getCertificate(options, cb)            // returns (err, pems={ privkey (key), cert, chain (ca) })
 
     { newAuthzUrl: '<url>'                    //    specify acmeUrls.newAuthz
     , newCertUrl: '<url>'                     //    specify acmeUrls.newCert
