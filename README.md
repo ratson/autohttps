@@ -77,7 +77,9 @@ LeCore.registerNewAccount(options, cb)        // returns "regr" registration dat
 
     { newRegUrl: '<url>'                      //    no defaults, specify acmeUrls.newAuthz
     , email: '<email>'                        //    valid email (server checks MX records)
-    , accountPrivateKeyPem: '<ASCII PEM>'     //    callback to allow user interaction for tosUrl
+    , accountKeypair: {                       //    privateKeyPem or privateKeyJwt
+        privateKeyPem: '<ASCII PEM>'
+      }
     , agreeToTerms: fn (tosUrl, cb) {}        //    must specify agree=tosUrl to continue (or falsey to end)
     }
 
@@ -87,8 +89,12 @@ LeCore.getCertificate(options, cb)            // returns (err, pems={ key, cert,
     { newAuthzUrl: '<url>'                    //    specify acmeUrls.newAuthz
     , newCertUrl: '<url>'                     //    specify acmeUrls.newCert
 
-    , domainPrivateKeyPem: '<ASCII PEM>'
-    , accountPrivateKeyPem: '<ASCII PEM>'
+    , domainKeypair: {
+        privateKeyPem: '<ASCII PEM>'
+      }
+    , accountKeypair: {
+        privateKeyPem: '<ASCII PEM>'
+      }
     , domains: ['example.com']
 
     , setChallenge: fn (hostname, key, val, cb)
@@ -118,19 +124,6 @@ LeCore.Acme                               // Signs requests with JWK
     acme.post(url, body, cb)                // POST with signature
     acme.parseLinks(link)                   // (internal) parses 'link' header
     acme.getNonce(url, cb)                  // (internal) HEAD request to get 'replay-nonce' strings
-
-// Note: some of these are not async,
-// but they will be soon. Don't rely
-// on their API yet.
-
-// Crypto Helpers
-LeCore.leCrypto
-    generateRsaKeypair(bitLen, exponent, cb);     // returns { privateKeyPem, privateKeyJwk, publicKeyPem, publicKeyMd5 }
-    thumbprint(lePubKey)                          // generates public key thumbprint
-    generateSignature(lePrivKey, bodyBuf, nonce)  // generates a signature
-    privateJwkToPems(jwk)                         // { n: '...', e: '...', iq: '...', ... } to PEMs
-    privatePemToJwk                               // PEM to JWK (see line above)
-    importPemPrivateKey(privateKeyPem)            // (internal) returns abstract private key
 ```
 
 For testing and development, you can also inject the dependencies you want to use:
@@ -161,16 +154,18 @@ This is how you **register an ACME account** and **get an HTTPS certificate**
 'use strict';
 
 var LeCore = require('letiny-core');
+var RSA = require('rsa-compat').RSA;
 
 var email = 'user@example.com';                   // CHANGE TO YOUR EMAIL
 var domains = 'example.com';                      // CHANGE TO YOUR DOMAIN
 var acmeDiscoveryUrl = LeCore.stagingServerUrl;   // CHANGE to production, when ready
 
-var accountPrivateKeyPem = null;
-var domainPrivateKeyPem = null;
+var accountKeypair = null;                        // { privateKeyPem: null, privateKeyJwk: null };
+var domainKeypair = null;                         // same as above
 var acmeUrls = null;
 
-LeCore.leCrypto.generateRsaKeypair(2048, 65537, function (err, pems) {
+RSA.generateKeypair(2048, 65537, function (err, keypair) {
+    accountKeypair = keypair;
     // ...
     LeCore.getAcmeUrls(acmeDiscoveryUrl, function (err, urls) {
         // ...
@@ -182,7 +177,7 @@ function runDemo() {
     LeCore.registerNewAccount(
         { newRegUrl: acmeUrls.newReg
         , email: email
-        , accountPrivateKeyPem: accountPrivateKeyPem
+        , accountKeypair: accountKeypair
         , agreeToTerms: function (tosUrl, done) {
 
               // agree to the exact version of these terms
@@ -195,8 +190,8 @@ function runDemo() {
                 { newAuthzUrl: acmeUrls.newAuthz
                 , newCertUrl: acmeUrls.newCert
 
-                , domainPrivateKeyPem: domainPrivateKeyPem
-                , accountPrivateKeyPem: accountPrivateKeyPem
+                , domainKeypair: domainKeypair
+                , accountKeypair: accountKeypair
                 , domains: domains
 
                 , setChallenge: challengeStore.set
@@ -323,4 +318,4 @@ MPL 2.0
 All of the code is available under the MPL-2.0.
 
 Some of the files are original work not modified from `letiny`
-and are made available under MIT as well (check file headers).
+and are made available under MIT and Apache-2.0 as well (check file headers).
