@@ -120,7 +120,7 @@ LeCore.knownEndpoints                     // new-authz, new-cert, new-reg, revok
 
 // HTTP Client Helpers
 LeCore.Acme                               // Signs requests with JWK
-    acme = new Acme(lePrivateKey)           // privateKey format is abstract
+    acme = new Acme(keypair)                // 'keypair' is an object with `privateKeyPem` and/or `privateKeyJwk`
     acme.post(url, body, cb)                // POST with signature
     acme.parseLinks(link)                   // (internal) parses 'link' header
     acme.getNonce(url, cb)                  // (internal) HEAD request to get 'replay-nonce' strings
