@@ -14,10 +14,7 @@ function create(deps) {
   LeCore.productionServerUrl                = "https://acme-v01.api.letsencrypt.org/directory";
   LeCore.stagingServerUrl                   = "https://acme-staging.api.letsencrypt.org/directory";
   LeCore.acmeChallengePrefix                = "/.well-known/acme-challenge/";
-  LeCore.configDir                          = "/etc/letsencrypt/";
-  LeCore.logsDir                            = "/var/log/letsencrypt/";
-  LeCore.workDir                            = "/var/lib/letsencrypt/";
-  LeCore.knownEndpoints                     = ['new-authz', 'new-cert', 'new-reg', 'revoke-cert'];
+  LeCore.knownEndpoints                     = [ 'new-authz', 'new-cert', 'new-reg', 'revoke-cert' ];
 
   deps.LeCore = LeCore;
   deps.Acme = LeCore.Acme = require('./lib/acme-client').create(deps);
