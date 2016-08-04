@@ -1,6 +1,6 @@
 {
   "name": "letiny-core",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A framework for building letsencrypt clients, forked from letiny",
   "main": "node.js",
   "browser": "browser.js",
@@ -31,7 +31,7 @@
   "dependencies": {
     "node-forge": "^0.6.38",
     "request": "^2.55.0",
-    "rsa-compat": "^1.0.1"
+    "rsa-compat": "^1.2.1"
   },
   "optionalDependencies": {
     "ursa": "^0.9.1"
