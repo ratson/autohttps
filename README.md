@@ -39,8 +39,8 @@ Exposed Methods
 For ACME Challenge:
 
 * `setChallange(opts, domain, key, val, done)`
-* `getChallange(domain, key, done)`
-* `removeChallange(domain, key, done)`
+* `getChallange(opts, domain, key, done)`
+* `removeChallange(opts, domain, key, done)`
 
 For node-letsencrypt internals:
 
