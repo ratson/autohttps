@@ -5,26 +5,38 @@
 */
 'use strict';
 
+var defaults = {
+  productionServerUrl:    "https://acme-v01.api.letsencrypt.org/directory"
+, stagingServerUrl:       "https://acme-staging.api.letsencrypt.org/directory"
+, acmeChallengePrefix:    "/.well-known/acme-challenge/"
+, knownEndpoints:         [ 'new-authz', 'new-cert', 'new-reg', 'revoke-cert' ]
+};
+
 function create(deps) {
-  var LeCore = {};
+  deps = deps || {};
+  deps.LeCore = {};
 
-  // Note: these are NOT DEFAULTS
-  // They are de facto standards that you may
-  // or may not use in your implementation
-  LeCore.productionServerUrl                = "https://acme-v01.api.letsencrypt.org/directory";
-  LeCore.stagingServerUrl                   = "https://acme-staging.api.letsencrypt.org/directory";
-  LeCore.acmeChallengePrefix                = "/.well-known/acme-challenge/";
-  LeCore.knownEndpoints                     = [ 'new-authz', 'new-cert', 'new-reg', 'revoke-cert' ];
+  Object.keys(defaults).forEach(function (key) {
+    deps[key] = defaults[key];
+    deps.LeCore[key] = defaults[key];
+  });
 
-  deps.LeCore = LeCore;
-  deps.Acme = LeCore.Acme = require('./lib/acme-client').create(deps);
+  deps.RSA = deps.RSA || require('rsa-compat').RSA;
+  deps.request = deps.request || require('request');
 
-  LeCore.getAcmeUrls = require('./lib/get-acme-urls').create(deps);
-  LeCore.registerNewAccount = require('./lib/register-new-account').create(deps);
-  LeCore.getCertificate = require('./lib/get-certificate').create(deps);
+  deps.LeCore.Acme = require('./lib/acme-client').create(deps);
+  deps.LeCore.getAcmeUrls = require('./lib/get-acme-urls').create(deps);
+  deps.LeCore.registerNewAccount = require('./lib/register-new-account').create(deps);
+  deps.LeCore.getCertificate = require('./lib/get-certificate').create(deps);
 
-  return LeCore;
+  deps.Acme = deps.LeCore.Acme;
+
+  return deps.LeCore;
 }
 
-module.exports = create(require('./lib/node'));
+// TODO nix this usage in v2
+module.exports = create();
 module.exports.create = create;
+
+// TODO make this the official usage
+module.exports.ACME = { create: create };

@@ -1,4 +1,6 @@
-# letiny-core
+# le-acme-core
+
+<!-- rename to le-acme-core -->
 
 A framework for building letsencrypt clients, forked from `letiny`.
 
@@ -21,7 +23,31 @@ You probably want one of these pre-built clients instead:
 ## Install & Usage:
 
 ```bash
-npm install --save letiny-core
+npm install --save le-acme-core
+```
+
+To use the default dependencies:
+
+```javascript
+'use strict';
+
+var ACME = require('le-acme-core').ACME.create();
+```
+
+For **testing** and **development**, you can also inject the dependencies you want to use:
+
+```javascript
+'use strict';
+
+var ACME = require('le-acme-core').ACME.create({
+  request: require('request')
+, RSA: require('rsa-compat').RSA
+});
+
+// now uses node `request` (could also use jQuery or Angular in the browser)
+ACME.getAcmeUrls(discoveryUrl, function (err, urls) {
+  console.log(urls);
+});
 ```
 
 You will follow these steps to obtain certificates:
@@ -49,12 +75,12 @@ Note: use **YOUR EMAIL** and accept the terms of service (run `ddns --help` to s
 
 <!-- TODO tutorial on ddns -->
 
-Install letiny-core and its dependencies. **Note**: it's okay if you're on windows
+Install le-acme-core and its dependencies. **Note**: it's okay if you're on windows
 and `ursa` fails to compile. It'll still work.
 
 ```bash
-git clone https://github.com/Daplie/letiny-core.git ~/letiny-core
-pushd ~/letiny-core
+git clone https://github.com/Daplie/le-acme-core.git ~/le-acme-core
+pushd ~/le-acme-core
 
 npm install
 ```
@@ -73,7 +99,7 @@ The Goodies
 
 ```javascript
 // Accounts
-LeCore.registerNewAccount(options, cb)        // returns "regr" registration data
+ACME.registerNewAccount(options, cb)        // returns "regr" registration data
 
     { newRegUrl: '<url>'                      //    no defaults, specify acmeUrls.newAuthz
     , email: '<email>'                        //    valid email (server checks MX records)
@@ -84,7 +110,7 @@ LeCore.registerNewAccount(options, cb)        // returns "regr" registration dat
     }
 
 // Registration
-LeCore.getCertificate(options, cb)            // returns (err, pems={ privkey (key), cert, chain (ca) })
+ACME.getCertificate(options, cb)            // returns (err, pems={ privkey (key), cert, chain (ca) })
 
     { newAuthzUrl: '<url>'                    //    specify acmeUrls.newAuthz
     , newCertUrl: '<url>'                     //    specify acmeUrls.newCert
@@ -102,49 +128,32 @@ LeCore.getCertificate(options, cb)            // returns (err, pems={ privkey (k
     }
 
 // Discovery URLs
-LeCore.getAcmeUrls(acmeDiscoveryUrl, cb)      // returns (err, acmeUrls={newReg,newAuthz,newCert,revokeCert})
+ACME.getAcmeUrls(acmeDiscoveryUrl, cb)      // returns (err, acmeUrls={newReg,newAuthz,newCert,revokeCert})
 ```
 
 Helpers & Stuff
 
 ```javascript
 // Constants
-LeCore.productionServerUrl                // https://acme-v01.api.letsencrypt.org/directory
-LeCore.stagingServerUrl                   // https://acme-staging.api.letsencrypt.org/directory
-LeCore.acmeChallengePrefix                // /.well-known/acme-challenge/
-LeCore.configDir                          // /etc/letsencrypt/
-LeCore.logsDir                            // /var/log/letsencrypt/
-LeCore.workDir                            // /var/lib/letsencrypt/
-LeCore.knownEndpoints                     // new-authz, new-cert, new-reg, revoke-cert
+ACME.productionServerUrl                // https://acme-v01.api.letsencrypt.org/directory
+ACME.stagingServerUrl                   // https://acme-staging.api.letsencrypt.org/directory
+ACME.acmeChallengePrefix                // /.well-known/acme-challenge/
+ACME.knownEndpoints                     // new-authz, new-cert, new-reg, revoke-cert
 
 
 // HTTP Client Helpers
-LeCore.Acme                               // Signs requests with JWK
+ACME.Acme                               // Signs requests with JWK
     acme = new Acme(keypair)                // 'keypair' is an object with `privateKeyPem` and/or `privateKeyJwk`
     acme.post(url, body, cb)                // POST with signature
     acme.parseLinks(link)                   // (internal) parses 'link' header
     acme.getNonce(url, cb)                  // (internal) HEAD request to get 'replay-nonce' strings
 ```
 
-For testing and development, you can also inject the dependencies you want to use:
-
-```javascript
-LeCore = LeCore.create({
-  request: require('request')
-, RSA: rquire('rsa-compat').RSA
-});
-
-// now uses node `request` (could also use jQuery or Angular in the browser)
-LeCore.getAcmeUrls(discoveryUrl, function (err, urls) {
-  console.log(urls);
-});
-```
-
 ## Example
 
 Below you'll find a stripped-down example. You can see the full example in the example folder.
 
-* [example/](https://github.com/Daplie/letiny-core/blob/master/example/)
+* [example/](https://github.com/Daplie/le-acme-core/blob/master/example/)
 
 #### Register Account & Domain
 
@@ -153,12 +162,12 @@ This is how you **register an ACME account** and **get an HTTPS certificate**
 ```javascript
 'use strict';
 
-var LeCore = require('letiny-core');
+var ACME = require('le-acme-core').ACME.create();
 var RSA = require('rsa-compat').RSA;
 
 var email = 'user@example.com';                   // CHANGE TO YOUR EMAIL
 var domains = 'example.com';                      // CHANGE TO YOUR DOMAIN
-var acmeDiscoveryUrl = LeCore.stagingServerUrl;   // CHANGE to production, when ready
+var acmeDiscoveryUrl = ACME.stagingServerUrl;   // CHANGE to production, when ready
 
 var accountKeypair = null;                        // { privateKeyPem: null, privateKeyJwk: null };
 var domainKeypair = null;                         // same as above
@@ -167,14 +176,14 @@ var acmeUrls = null;
 RSA.generateKeypair(2048, 65537, function (err, keypair) {
     accountKeypair = keypair;
     // ...
-    LeCore.getAcmeUrls(acmeDiscoveryUrl, function (err, urls) {
+    ACME.getAcmeUrls(acmeDiscoveryUrl, function (err, urls) {
         // ...
         runDemo();
     });
 });
 
 function runDemo() {
-    LeCore.registerNewAccount(
+    ACME.registerNewAccount(
         { newRegUrl: acmeUrls.newReg
         , email: email
         , accountKeypair: accountKeypair
@@ -186,7 +195,7 @@ function runDemo() {
         }
       , function (err, regr) {
 
-            LeCore.getCertificate(
+            ACME.getCertificate(
                 { newAuthzUrl: acmeUrls.newAuthz
                 , newCertUrl: acmeUrls.newCert
 
@@ -214,7 +223,7 @@ function runDemo() {
 ```
 
 **But wait**, there's more!
-See [example/letsencrypt.js](https://github.com/Daplie/letiny-core/blob/master/example/letsencrypt.js)
+See [example/letsencrypt.js](https://github.com/Daplie/le-acme-core/blob/master/example/letsencrypt.js)
 
 #### Run a Server on 80, 443, and 5001 (https/tls)
 
@@ -261,7 +270,7 @@ http.createServer(acmeResponder).listen(80, function () {
 ```
 
 **But wait**, there's more!
-See [example/serve.js](https://github.com/Daplie/letiny-core/blob/master/example/serve.js)
+See [example/serve.js](https://github.com/Daplie/le-acme-core/blob/master/example/serve.js)
 
 #### Put some storage in place
 
@@ -302,8 +311,8 @@ var certStore = {
 **But wait**, there's more!
 See
 
-* [example/challenge-store.js](https://github.com/Daplie/letiny-core/blob/master/challenge-store.js)
-* [example/cert-store.js](https://github.com/Daplie/letiny-core/blob/master/cert-store.js)
+* [example/challenge-store.js](https://github.com/Daplie/le-acme-core/blob/master/challenge-store.js)
+* [example/cert-store.js](https://github.com/Daplie/le-acme-core/blob/master/cert-store.js)
 
 ## Authors
 
