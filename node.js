@@ -43,9 +43,5 @@ function create(deps) {
   return deps.LeCore;
 }
 
-// TODO nix this usage in v2
-module.exports = create();
-module.exports.create = create;
-
 // TODO make this the official usage
 module.exports.ACME = { create: create };
