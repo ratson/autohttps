@@ -1,5 +1,7 @@
 # le-acme-core
 
+Looking for **letiny-core**? Check the [v1.x branch](https://github.com/Daplie/le-acme-core/tree/v2.x).
+
 <!-- rename to le-acme-core -->
 
 A framework for building letsencrypt clients, forked from `letiny`.
