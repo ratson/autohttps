@@ -28,6 +28,15 @@ function create(deps) {
   deps.LeCore.getAcmeUrls = require('./lib/get-acme-urls').create(deps);
   deps.LeCore.registerNewAccount = require('./lib/register-new-account').create(deps);
   deps.LeCore.getCertificate = require('./lib/get-certificate').create(deps);
+  deps.LeCore.getOptions = function () {
+    var defs = {};
+
+    Object.keys(defaults).forEach(function (key) {
+      defs[key] = defs[deps] || defaults[key];
+    });
+
+    return defs;
+  };
 
   deps.Acme = deps.LeCore.Acme;
 
