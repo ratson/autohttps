@@ -6,10 +6,12 @@
 'use strict';
 
 var defaults = {
-  productionServerUrl:    "https://acme-v01.api.letsencrypt.org/directory"
-, stagingServerUrl:       "https://acme-staging.api.letsencrypt.org/directory"
-, acmeChallengePrefix:    "/.well-known/acme-challenge/"
+  productionServerUrl:    'https://acme-v01.api.letsencrypt.org/directory'
+, stagingServerUrl:       'https://acme-staging.api.letsencrypt.org/directory'
+, acmeChallengePrefix:    '/.well-known/acme-challenge/'
 , knownEndpoints:         [ 'new-authz', 'new-cert', 'new-reg', 'revoke-cert' ]
+, challengeType:          'http-01'
+, rsaKeySize:             2048
 };
 
 function create(deps) {
@@ -45,3 +47,7 @@ function create(deps) {
 
 // TODO make this the official usage
 module.exports.ACME = { create: create };
+
+Object.keys(defaults).forEach(function (key) {
+  module.exports.ACME[key] = defaults[key];
+});
