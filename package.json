@@ -26,5 +26,8 @@
   "bugs": {
     "url": "https://github.com/Daplie/le-challenge-fs/issues"
   },
-  "homepage": "https://github.com/Daplie/le-challenge-fs#readme"
+  "homepage": "https://github.com/Daplie/le-challenge-fs#readme",
+  "dependencies": {
+    "mkdirp": "^0.5.1"
+  }
 }
