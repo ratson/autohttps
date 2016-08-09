@@ -4,7 +4,7 @@
   "description": "A fs-based strategy for node-letsencrypt for setting, retrieving, and clearing ACME challenges issued by the ACME server",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js"
   },
   "repository": {
     "type": "git",
