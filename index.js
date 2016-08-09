@@ -4,26 +4,26 @@ var fs = require('fs');
 var path = require('path');
 
 var defaults = {
-  webrootPath: '~/letsencrypt/var/lib'
+  webrootPath: [ '~', 'letsencrypt', 'var', 'lib' ].join(path.sep)
 , debug: false
 };
 
-var Challenger = module.exports;
+var Challenge = module.exports;
 
-Challenger.create = function (options) {
+Challenge.create = function (options) {
   var results = {};
 
-  Object.keys(Challenger).forEach(function (key) {
-    results[key] = Challenger[key];
+  Object.keys(Challenge).forEach(function (key) {
+    results[key] = Challenge[key];
   });
-
-  results._options = options;
+  results.create = undefined;
 
   Object.keys(defaults).forEach(function (key) {
     if (!(key in options)) {
       options[key] = defaults[key];
     }
   });
+  results._options = options;
 
   results.getOptions = function () {
     return results._options;
@@ -32,25 +32,25 @@ Challenger.create = function (options) {
   return results;
 };
 
-Challenger.setChallenge = function (args, domain, challengePath, keyAuthorization, done) {
+Challenge.set = function (defaults, domain, challengePath, keyAuthorization, done) {
   var mkdirp = require('mkdirp');
 
-  mkdirp(args.webrootPath, function (err) {
+  mkdirp(defaults.webrootPath, function (err) {
     if (err) {
       done(err);
       return;
     }
 
-    fs.writeFile(path.join(args.webrootPath, challengePath), keyAuthorization, 'utf8', function (err) {
+    fs.writeFile(path.join(defaults.webrootPath, challengePath), keyAuthorization, 'utf8', function (err) {
       done(err);
     });
   });
 };
 
-Challenger.getChallenge = function (args, domain, key, done) {
-  fs.readFile(path.join(args.webrootPath, key), 'utf8', done);
+Challenge.get = function (defaults, domain, key, done) {
+  fs.readFile(path.join(defaults.webrootPath, key), 'utf8', done);
 };
 
-Challenger.removeChallenge = function (args, domain, key, done) {
-  fs.unlink(path.join(args.webrootPath, key), done);
+Challenge.remove = function (defaults, domain, key, done) {
+  fs.unlink(path.join(defaults.webrootPath, key), done);
 };
