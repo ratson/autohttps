@@ -1,6 +1,6 @@
 # le-acme-core
 
-Looking for **letiny-core**? Check the [v1.x branch](https://github.com/Daplie/le-acme-core/tree/v2.x).
+Looking for **letiny-core**? Check the [v1.x branch](https://github.com/Daplie/le-acme-core/tree/v1.x).
 
 <!-- rename to le-acme-core -->
 
