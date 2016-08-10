@@ -7,7 +7,7 @@
 | [letsencrypt-hapi](https://github.com/Daplie/letsencrypt-hapi)
 |
 
-# le-challenge-fs
+# le-challenge-webroot
 
 A fs-based strategy for node-letsencrypt for setting, retrieving,
 and clearing ACME challenges issued by the ACME server
