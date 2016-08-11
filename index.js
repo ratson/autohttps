@@ -8,7 +8,7 @@ module.exports.create = function (autoSni) {
   if (!autoSni.getCertificatesAsync) { autoSni.getCertificatesAsync = require('bluebird').promisify(autoSni.getCertificates); }
   if (!autoSni.notBefore) { throw new Error("must supply options.notBefore (and options.notAfter)"); }
   if (!autoSni.notAfter) { autoSni.notAfter = autoSni.notBefore - (3 * DAY); }
-  if (!autoSni.httpsOptions) { autoSni.httpOptions = {}; }
+  if (!autoSni.httpsOptions) { autoSni.httpsOptions = {}; }
 
 
 
@@ -42,7 +42,7 @@ module.exports.create = function (autoSni) {
   , _cacheCerts: function (certs) {
       var meta = {
         certs: certs
-      , tlsContext: !autoSni._dbg_now && tls.createSecureContext({
+      , tlsContext: 'string' === typeof certs.cert && tls.createSecureContext({
           key: certs.privkey
         , cert: certs.cert + certs.chain
         , rejectUnauthorized: autoSni.httpsOptions.rejectUnauthorized
@@ -78,20 +78,24 @@ module.exports.create = function (autoSni) {
       var now = (autoSni._dbg_now || Date.now());
 
       if (certMeta && certMeta.subject !== domain) {
-        certMeta = autoSni._ipc[domain];
+        //log(autoSni.debug, "LINK CERT", domain);
+        certMeta = autoSni._ipc[certMeta.subject];
       }
 
       if (!certMeta) {
+        //log(autoSni.debug, "NO CERT", domain);
         // we don't have a cert and must get one
         promise = autoSni.getCertificatesAsync(domain, null);
       }
       else if (now >= certMeta.expiresNear) {
+        //log(autoSni.debug, "EXPIRED CERT");
         // we have a cert, but it's no good for the average user
         promise = autoSni.getCertificatesAsync(domain, certMeta.certs);
       } else {
 
         // it's time to renew the cert
         if (now >= certMeta.renewAt) {
+          //log(autoSni.debug, "RENEWABLE CERT");
           // give the cert some time (2-5 min) to be validated and replaced before trying again
           certMeta.renewAt = (autoSni._dbg_now || Date.now()) + (2 * MIN) + (3 * MIN * Math.random());
           // let the update happen in the background
@@ -106,7 +110,11 @@ module.exports.create = function (autoSni) {
       // promise the non-existent or expired cert
       promise.then(autoSni._cacheCerts).then(function (certMeta) {
         cb(null, certMeta.tlsContext);
-      }, cb);
+      }, function (err) {
+        console.error('ERROR in le-sni-auto:');
+        console.error(err.stack || err);
+        cb(err);
+      });
     }
 
 
