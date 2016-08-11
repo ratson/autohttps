@@ -4,7 +4,8 @@ var fs = require('fs');
 var path = require('path');
 
 var defaults = {
-  webrootPath: [ '~', 'letsencrypt', 'var', 'lib' ].join(path.sep)
+  //webrootPath: [ '~', 'letsencrypt', 'var', 'lib' ].join(path.sep)
+  webrootPath: require('os').tmpdir() + path.sep + 'acme-challenge'
 , debug: false
 };
 
@@ -19,7 +20,7 @@ Challenge.create = function (options) {
   results.create = undefined;
 
   Object.keys(defaults).forEach(function (key) {
-    if (!(key in options)) {
+    if ('undefined' !== typeof options[key]) {
       options[key] = defaults[key];
     }
   });
