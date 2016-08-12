@@ -1,21 +1,39 @@
 'use strict';
 
-// autoSni = { notBefore, notAfter, getCertificates, httpsOptions, _dbg_now }
+var DAY = 24 * 60 * 60 * 1000;
+var MIN = 60 * 1000;
+var defaults = {
+  // don't renew before the renewWithin period
+  renewWithin: 7 * DAY
+, _renewWithinMin: 3 * DAY
+  // renew before the renewBy period
+, renewBy: 2 * DAY
+, _renewByMin: Math.floor(DAY / 2)
+  // just to account for clock skew really
+, _dropDead: 5 * MIN
+};
+
+// autoSni = { renewWithin, renewBy, getCertificates, tlsOptions, _dbg_now }
 module.exports.create = function (autoSni) {
 
-  var DAY = 24 * 60 * 60 * 1000;
-  var MIN = 60 * 1000;
   if (!autoSni.getCertificatesAsync) { autoSni.getCertificatesAsync = require('bluebird').promisify(autoSni.getCertificates); }
-  if (!autoSni.notBefore) { throw new Error("must supply options.notBefore (and options.notAfter)"); }
-  if (!autoSni.notAfter) { autoSni.notAfter = autoSni.notBefore - (3 * DAY); }
-  if (!autoSni.httpsOptions) { autoSni.httpsOptions = {}; }
+  if (!autoSni.renewWithin) { autoSni.renewWithin = autoSni.notBefore || defaults.renewWithin; }
+  if (autoSni.renewWithin < defaults._renewWithinMin) {
+    throw new Error("options.renewWithin should be at least 3 days");
+  }
+  if (!autoSni.renewBy) { autoSni.renewBy = autoSni.notBefore || defaults.renewBy; }
+  if (autoSni.renewBy < defaults._renewByMin) {
+    throw new Error("options.renewBy should be at least 12 hours");
+  }
+  if (!autoSni.tlsOptions) { autoSni.tlsOptions = autoSni.httpsOptions || {}; }
 
 
 
 
-  //autoSni.renewWithin = autoSni.notBefore;                    // i.e. 15 days
-  autoSni.renewWindow = autoSni.notBefore - autoSni.notAfter;      // i.e. 1 day
-  //autoSni.renewRatio = autoSni.notBefore = autoSni.renewWindow;  // i.e. 1/15 (6.67%)
+  autoSni._dropDead = defaults._dropDead;
+  //autoSni.renewWithin = autoSni.notBefore;                          // i.e. 15 days
+  autoSni._renewWindow = autoSni.renewWithin - autoSni.renewBy;      // i.e. 1 day
+  //autoSni.renewRatio = autoSni.notBefore = autoSni._renewWindow;   // i.e. 1/15 (6.67%)
 
 
 
@@ -32,31 +50,32 @@ module.exports.create = function (autoSni) {
 
     // in-process cache
     _ipc: {}
-    // just to account for clock skew
-  , _fiveMin: 5 * MIN
+  , getOptions: function () {
+      return JSON.parse(JSON.stringify(defaults));
+    }
 
 
 
 
     // cache and format incoming certs
-  , _cacheCerts: function (certs) {
+  , cacheCerts: function (certs) {
       var meta = {
         certs: certs
       , tlsContext: 'string' === typeof certs.cert && tls.createSecureContext({
           key: certs.privkey
         , cert: certs.cert + certs.chain
-        , rejectUnauthorized: autoSni.httpsOptions.rejectUnauthorized
+        , rejectUnauthorized: autoSni.tlsOptions.rejectUnauthorized
 
-        , requestCert: autoSni.httpsOptions.requestCert  // request peer verification
-        , ca: autoSni.httpsOptions.ca                    // this chain is for incoming peer connctions
-        , crl: autoSni.httpsOptions.crl                  // this crl is for incoming peer connections
+        , requestCert: autoSni.tlsOptions.requestCert  // request peer verification
+        , ca: autoSni.tlsOptions.ca                    // this chain is for incoming peer connctions
+        , crl: autoSni.tlsOptions.crl                  // this crl is for incoming peer connections
         }) || { '_fake_tls_context_': true }
 
       , subject: certs.subject
         // stagger renewal time by a little bit of randomness
-      , renewAt: (certs.expiresAt - (autoSni.notBefore - (autoSni.renewWindow * Math.random())))
+      , renewAt: (certs.expiresAt - (autoSni.renewWithin - (autoSni._renewWindow * Math.random())))
         // err just barely on the side of safety
-      , expiresNear: certs.expiresAt - autoSni._fiveMin
+      , expiresNear: certs.expiresAt - autoSni._dropDead
       };
       var link = { subject: certs.subject };
 
@@ -99,7 +118,7 @@ module.exports.create = function (autoSni) {
           // give the cert some time (2-5 min) to be validated and replaced before trying again
           certMeta.renewAt = (autoSni._dbg_now || Date.now()) + (2 * MIN) + (3 * MIN * Math.random());
           // let the update happen in the background
-          autoSni.getCertificatesAsync(domain, certMeta.certs).then(autoSni._cacheCerts);
+          autoSni.getCertificatesAsync(domain, certMeta.certs).then(autoSni.cacheCerts);
         }
 
         // return the valid cert right away
@@ -108,7 +127,7 @@ module.exports.create = function (autoSni) {
       }
 
       // promise the non-existent or expired cert
-      promise.then(autoSni._cacheCerts).then(function (certMeta) {
+      promise.then(autoSni.cacheCerts).then(function (certMeta) {
         cb(null, certMeta.tlsContext);
       }, function (err) {
         console.error('ERROR in le-sni-auto:');
