@@ -62,9 +62,7 @@ http.createServer(le.middleware(redirectHttps));
 
 
 var app = require('express')();
-var httpsOptions = { SNICallback: le.sni.callback };
-httpsOptions = require('localhost.daplie.com-certificates').merge(httpsOptions);
-https.createServer(dummyCerts, le.middleware(app)).listen(443);
+https.createServer(le.httpsOptions, le.middleware(app)).listen(443);
 ```
 
 You can also provide a thunk-style `getCertificates(domain, certs, cb)`.
