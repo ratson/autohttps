@@ -3,6 +3,7 @@
 | [letsencrypt](https://github.com/Daplie/node-letsencrypt) (library)
 | [letsencrypt-cli](https://github.com/Daplie/letsencrypt-cli)
 | [letsencrypt-express](https://github.com/Daplie/letsencrypt-express)
+| [letsencrypt-cluster](https://github.com/Daplie/letsencrypt-cluster)
 | [letsencrypt-koa](https://github.com/Daplie/letsencrypt-koa)
 | [letsencrypt-hapi](https://github.com/Daplie/letsencrypt-hapi)
 |
