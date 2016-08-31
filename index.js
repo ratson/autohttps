@@ -40,6 +40,7 @@ Challenge.create = function (options) {
 //
 Challenge.set = function (args, domain, challengePath, keyAuthorization, done) {
   var mkdirp = require('mkdirp');
+  keyAuthorization = String(keyAuthorization);
 
   mkdirp(args.webrootPath, function (err) {
     if (err) {

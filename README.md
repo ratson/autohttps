@@ -3,6 +3,7 @@
 | [letsencrypt](https://github.com/Daplie/node-letsencrypt) (library)
 | [letsencrypt-cli](https://github.com/Daplie/letsencrypt-cli)
 | [letsencrypt-express](https://github.com/Daplie/letsencrypt-express)
+| [letsencrypt-cluster](https://github.com/Daplie/letsencrypt-cluster)
 | [letsencrypt-koa](https://github.com/Daplie/letsencrypt-koa)
 | [letsencrypt-hapi](https://github.com/Daplie/letsencrypt-hapi)
 |
@@ -57,3 +58,4 @@ For ACME Challenge:
 For node-letsencrypt internals:
 
 * `getOptions()` returns the internal defaults merged with the user-supplied options
+* `loopback(defaults, domain, key, value, done)` test, by external means, that the ACME server's challenge server will succeed
