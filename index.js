@@ -5,7 +5,7 @@ var path = require('path');
 
 var defaults = {
   //webrootPath: [ '~', 'letsencrypt', 'var', 'lib' ].join(path.sep)
-  webrootPath: require('os').tmpdir() + path.sep + 'acme-challenge'
+  webrootPath: path.join(require('os').tmpdir(), 'acme-challenge')
 , debug: false
 };
 
