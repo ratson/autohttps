@@ -32,7 +32,7 @@
     "pfx"
   ],
   "dependencies": {
-    "request": "^2.55.0",
-    "rsa-compat": "^1.2.4"
+    "request": "^2.74.0",
+    "rsa-compat": "^1.2.7"
   }
 }
