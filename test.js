@@ -17,13 +17,19 @@ var CERT_2 = {
 , subject: 'example.com'
 , altnames: ['example.com', 'www.example.com']
 };
+var CERT_3 = {
+  expiresAt: EXPIRES_AT
+, subject: 'example.com'
+, altnames: ['example.com', 'www.example.com']
+, auto: false
+};
 
 var count = 0;
-var expectedCount = 3;
+var expectedCount = 4;
 var tests = [
   function (domain, certs, cb) {
     count += 1;
-    console.log('#1 is 1 of 3');
+    console.log('#1 is 1 of 4');
     if (!domain) {
       throw new Error("should have a domain");
     }
@@ -42,7 +48,7 @@ var tests = [
   }
 , function (domain, certs, cb) {
     count += 1;
-    console.log('#3 is 2 of 3');
+    console.log('#3 is 2 of 4');
     // NOTE: there's a very very small chance this will fail occasionally (if Math.random() < 0.01)
     if (!certs) {
       throw new Error("should have certs to renew (renewAt)");
@@ -52,7 +58,7 @@ var tests = [
   }
 , function (domain, certs, cb) {
     count += 1;
-    console.log('#4 is 3 of 3');
+    console.log('#4 is 3 of 4');
     if (!certs) {
       throw new Error("should have certs to renew (expiresNear)");
     }
@@ -62,6 +68,19 @@ var tests = [
 , function (/*domain, certs, cb*/) {
     console.log('#5 should NOT be called');
     throw new Error("Should not call register renew a certificate with more than 10 days left");
+  }
+, function (domain, certs, cb) {
+    count += 1;
+    console.log('#6 is 4 of 4');
+    if (certs) {
+      throw new Error("should not have certs that have been uncached");
+    }
+
+    cb(null, CERT_3);
+  }
+, function (/*domain, certs, cb*/) {
+    console.log('#7 should NOT be called');
+    throw new Error("Should not call register renew a non-auto certificate");
   }
 ].map(function (fn) {
   return require('bluebird').promisify(fn);
@@ -75,10 +94,16 @@ var leSni = require('./').create({
 , _dbg_now: START_DAY
 });
 
+var shared = 0;
+var expectedShared = 3;
+leSni.sniCallback('example.com', function (err, tlsContext) {
+  if (err) { throw err; }
+  shared += 1;
+});
 leSni.sniCallback('example.com', function (err, tlsContext) {
   if (err) { throw err; }
   if (!tlsContext._fake_tls_context_) {
-    throw new Error("Did not return tlsContext 0");
+    throw new Error("Did not return tlsContext #1");
   }
   leSni.getCertificatesAsync = tests.shift();
 
@@ -88,7 +113,7 @@ leSni.sniCallback('example.com', function (err, tlsContext) {
   leSni.sniCallback('example.com', function (err, tlsContext) {
     if (err) { throw err; }
     if (!tlsContext._fake_tls_context_) {
-      throw new Error("Did not return tlsContext 1");
+      throw new Error("Did not return tlsContext #2");
     }
     leSni.getCertificatesAsync = tests.shift();
 
@@ -97,10 +122,14 @@ leSni.sniCallback('example.com', function (err, tlsContext) {
 
 
 
+    leSni.sniCallback('www.example.com', function (err, tlsContext) {
+      if (err) { throw err; }
+      shared += 1;
+    });
     leSni.sniCallback('example.com', function (err, tlsContext) {
       if (err) { throw err; }
       if (!tlsContext._fake_tls_context_) {
-        throw new Error("Did not return tlsContext 2");
+        throw new Error("Did not return tlsContext #3");
       }
       leSni.getCertificatesAsync = tests.shift();
 
@@ -109,33 +138,67 @@ leSni.sniCallback('example.com', function (err, tlsContext) {
 
 
 
-      leSni.sniCallback('example.com', function (err, tlsContext) {
+      leSni.sniCallback('www.example.com', function (err, tlsContext) {
+        if (err) { throw err; }
+        shared += 1;
+      });
+      leSni.sniCallback('www.example.com', function (err, tlsContext) {
         if (err) { throw err; }
         if (!tlsContext._fake_tls_context_) {
-          throw new Error("Did not return tlsContext 2");
+          throw new Error("Did not return tlsContext #4");
         }
         leSni.getCertificatesAsync = tests.shift();
 
 
 
 
-        leSni.sniCallback('example.com', function (err, tlsContext) {
+        leSni.sniCallback('www.example.com', function (err, tlsContext) {
           if (err) { throw err; }
           if (!tlsContext._fake_tls_context_) {
-            throw new Error("Did not return tlsContext 2");
+            throw new Error("Did not return tlsContext #5");
           }
+          leSni.uncacheCerts({
+            subject: 'example.com'
+          , altnames: ['example.com', 'www.example.com']
+          });
+          leSni.getCertificatesAsync = tests.shift();
 
-          if (expectedCount === count && !tests.length) {
-            console.log('PASS');
-            return;
-          }
 
-          throw new Error("only " + count + " of the register getCertificate were called");
+
+
+          leSni.sniCallback('example.com', function (err, tlsContext) {
+            if (err) { throw err; }
+            if (!tlsContext._fake_tls_context_) {
+              throw new Error("Did not return tlsContext #6");
+            }
+            leSni.getCertificatesAsync = tests.shift();
+
+            leSni._dbg_now = RENEWABLE_DAY;
+
+
+
+
+            leSni.sniCallback('example.com', function (err, tlsContext) {
+              if (!tlsContext._fake_tls_context_) {
+                throw new Error("Did not return tlsContext #7");
+              }
+
+              if (expectedCount !== count) {
+                throw new Error("getCertificate only called " + count + " times");
+              }
+
+              if (expectedShared !== shared) {
+                throw new Error("wrongly used only " + shared + " shared promises");
+              }
+
+              if (tests.length) {
+                throw new Error("some test functions not run");
+              }
+
+              console.log('PASS');
+            });
+          });
         });
-
-
-
-
       });
     });
   });

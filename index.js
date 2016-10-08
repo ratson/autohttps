@@ -21,7 +21,7 @@ module.exports.create = function (autoSni) {
   if (autoSni.renewWithin < defaults._renewWithinMin) {
     throw new Error("options.renewWithin should be at least 3 days");
   }
-  if (!autoSni.renewBy) { autoSni.renewBy = autoSni.notBefore || defaults.renewBy; }
+  if (!autoSni.renewBy) { autoSni.renewBy = autoSni.notAfter || defaults.renewBy; }
   if (autoSni.renewBy < defaults._renewByMin) {
     throw new Error("options.renewBy should be at least 12 hours");
   }
@@ -72,6 +72,7 @@ module.exports.create = function (autoSni) {
         }) || { '_fake_tls_context_': true }
 
       , subject: certs.subject
+      , auto: 'undefined' === typeof certs.auto ? true : certs.auto
         // stagger renewal time by a little bit of randomness
       , renewAt: (certs.expiresAt - (autoSni.renewWithin - (autoSni._renewWindow * Math.random())))
         // err just barely on the side of safety
@@ -90,13 +91,23 @@ module.exports.create = function (autoSni) {
 
 
 
+  , uncacheCerts: function (certs) {
+      certs.altnames.forEach(function (domain) {
+        delete autoSni._ipc[domain];
+      });
+      delete autoSni._ipc[certs.subject];
+    }
+
+
+
+
     // automate certificate registration on request
   , sniCallback: function (domain, cb) {
       var certMeta = autoSni._ipc[domain];
       var promise;
       var now = (autoSni._dbg_now || Date.now());
 
-      if (certMeta && certMeta.subject !== domain) {
+      if (certMeta && !certMeta.then && certMeta.subject !== domain) {
         //log(autoSni.debug, "LINK CERT", domain);
         certMeta = autoSni._ipc[certMeta.subject];
       }
@@ -104,16 +115,23 @@ module.exports.create = function (autoSni) {
       if (!certMeta) {
         //log(autoSni.debug, "NO CERT", domain);
         // we don't have a cert and must get one
-        promise = autoSni.getCertificatesAsync(domain, null);
+        promise = autoSni.getCertificatesAsync(domain, null).then(autoSni.cacheCerts);
+        autoSni._ipc[domain] = promise;
+      }
+      else if (certMeta.then) {
+        //log(autoSni.debug, "PROMISED CERT", domain);
+        // we are already getting a cert
+        promise = certMeta
       }
       else if (now >= certMeta.expiresNear) {
         //log(autoSni.debug, "EXPIRED CERT");
         // we have a cert, but it's no good for the average user
-        promise = autoSni.getCertificatesAsync(domain, certMeta.certs);
+        promise = autoSni.getCertificatesAsync(domain, certMeta.certs).then(autoSni.cacheCerts);
+        autoSni._ipc[certMeta.subject] = promise;
       } else {
 
         // it's time to renew the cert
-        if (now >= certMeta.renewAt) {
+        if (certMeta.auto && now >= certMeta.renewAt) {
           //log(autoSni.debug, "RENEWABLE CERT");
           // give the cert some time (2-5 min) to be validated and replaced before trying again
           certMeta.renewAt = (autoSni._dbg_now || Date.now()) + (2 * MIN) + (3 * MIN * Math.random());
@@ -127,12 +145,14 @@ module.exports.create = function (autoSni) {
       }
 
       // promise the non-existent or expired cert
-      promise.then(autoSni.cacheCerts).then(function (certMeta) {
+      promise.then(function (certMeta) {
         cb(null, certMeta.tlsContext);
       }, function (err) {
         console.error('ERROR in le-sni-auto:');
         console.error(err.stack || err);
         cb(err);
+        // don't reuse this promise
+        delete autoSni._ipc[certMeta && certMeta.subject ? certMeta.subject : domain];
       });
     }
 
