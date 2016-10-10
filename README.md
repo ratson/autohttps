@@ -110,6 +110,7 @@ API
   * `renewBy` (default 2 days, min 12 hours)
 * `sniCallback(domain, cb)`
 * `cacheCerts(certs)`
+* `uncacheDomain(domain)`
 
 .renewWithin
 -----------
@@ -162,7 +163,8 @@ https.createServer(httpsOptions, app);
 Manually load a certificate into the cache.
 
 This is useful in a cluster environment where the master
-may wish to inform multiple workers of a new or renewed certificate.
+may wish to inform multiple workers of a new or renewed certificate,
+or to satisfy tls-sni-01 challenges.
 
 ```
 leSni.cacheCerts({
@@ -172,5 +174,21 @@ leSni.cacheCerts({
 , altnames: [ 'example.com', 'www.example.com' ]
 , issuedAt: 1470975565000
 , expiresAt: 1478751565000
+, auto: true
 });
 ```
+
+.uncacheCerts()
+-----------
+
+Remove cached certificates from the cache.
+
+This is useful once a tls-sni-01 challenge has been satisfied.
+
+```
+leSni.uncacheCerts({
+, subject: 'example.com'
+, altnames: [ 'example.com', 'www.example.com' ]
+});
+```
+
