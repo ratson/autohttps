@@ -3,7 +3,7 @@
 var fs = require('fs');
 var path = require('path');
 
-var defaults = {
+var myDefaults = {
   //webrootPath: [ '~', 'letsencrypt', 'var', 'lib' ].join(path.sep)
   webrootPath: path.join(require('os').tmpdir(), 'acme-challenge')
 , debug: false
@@ -19,9 +19,9 @@ Challenge.create = function (options) {
   });
   results.create = undefined;
 
-  Object.keys(defaults).forEach(function (key) {
+  Object.keys(myDefaults).forEach(function (key) {
     if ('undefined' === typeof options[key]) {
-      options[key] = defaults[key];
+      options[key] = myDefaults[key];
     }
   });
   results._options = options;
@@ -66,4 +66,54 @@ Challenge.get = function (defaults, domain, key, done) {
 
 Challenge.remove = function (defaults, domain, key, done) {
   fs.unlink(path.join(defaults.webrootPath, key), done);
+};
+
+Challenge.loopback = function (defaults, domain, key, done) {
+  var hostname = domain + (defaults.test ? ':' + defaults.test : '');
+  var urlstr = 'http://' + hostname + '/.well-known/acme-challenge/' + key;
+
+  require('http').get(urlstr, function (res) {
+    if (200 !== res.statusCode) {
+      done(new Error("local loopback failed with statusCode " + res.statusCode));
+      return;
+    }
+    var chunks = [];
+    res.on('data', function (chunk) {
+      chunks.push(chunk);
+    });
+    res.on('end', function () {
+      var str = Buffer.concat(chunks).toString('utf8').trim();
+      done(null, str);
+    });
+  }).on('error', function (err) {
+    done(err);
+  });
+};
+
+Challenge.test = function (args, domain, challenge, keyAuthorization, done) {
+  var me = this;
+  var key = keyAuthorization || challenge;
+
+  me.set(args, domain, challenge, key, function (err) {
+    if (err) { done(err); return; }
+
+    // test is actually the port to be used
+    myDefaults.test = args.test;
+    myDefaults.webrootPath = args.webrootPath;
+    me.loopback(args, domain, challenge, function (err, _key) {
+      if (err) { done(err); return; }
+
+      if (key !== _key) {
+        err = new Error("keyAuthorization [original] '" + key + "'"
+          + " did not match [result] '" + _key + "'");
+        return;
+      }
+
+      me.remove(myDefaults, domain, challenge, function (_err) {
+        if (_err) { done(_err); return; }
+
+        done(err);
+      });
+    });
+  });
 };
