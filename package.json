@@ -1,6 +1,6 @@
 {
   "name": "le-challenge-fs",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "A fs-based strategy for node-letsencrypt for setting, retrieving, and clearing ACME challenges issued by the ACME server",
   "main": "index.js",
   "scripts": {
