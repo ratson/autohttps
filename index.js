@@ -6,6 +6,7 @@ var path = require('path');
 var myDefaults = {
   //webrootPath: [ '~', 'letsencrypt', 'var', 'lib' ].join(path.sep)
   webrootPath: path.join(require('os').tmpdir(), 'acme-challenge')
+, loopbackTimeout: 5 * 1000
 , debug: false
 };
 
@@ -69,7 +70,7 @@ Challenge.remove = function (defaults, domain, key, done) {
 };
 
 Challenge.loopback = function (defaults, domain, key, done) {
-  var hostname = domain + (defaults.test ? ':' + defaults.test : '');
+  var hostname = domain + (defaults.loopbackPort ? ':' + defaults.loopbackPort : '');
   var urlstr = 'http://' + hostname + '/.well-known/acme-challenge/' + key;
 
   require('http').get(urlstr, function (res) {
@@ -85,6 +86,8 @@ Challenge.loopback = function (defaults, domain, key, done) {
       var str = Buffer.concat(chunks).toString('utf8').trim();
       done(null, str);
     });
+  }).setTimeout(defaults.loopbackTimeout, function () {
+    done(new Error("loopback timeout, could not reach server"));
   }).on('error', function (err) {
     done(err);
   });
@@ -97,8 +100,7 @@ Challenge.test = function (args, domain, challenge, keyAuthorization, done) {
   me.set(args, domain, challenge, key, function (err) {
     if (err) { done(err); return; }
 
-    // test is actually the port to be used
-    myDefaults.test = args.test;
+    myDefaults.loopbackPort = args.loopbackPort;
     myDefaults.webrootPath = args.webrootPath;
     me.loopback(args, domain, challenge, function (err, _key) {
       if (err) { done(err); return; }

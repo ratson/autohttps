@@ -10,7 +10,7 @@
 
 # le-challenge-webroot
 
-A fs-based strategy for node-letsencrypt for setting, retrieving,
+An fs-based strategy for node-letsencrypt for setting, retrieving,
 and clearing ACME challenges issued by the ACME server
 
 This places the acme challenge in an appropriate directory in the specified `webrootPath`
@@ -31,7 +31,9 @@ Usage
 
 ```bash
 var leChallenge = require('le-challenge-fs').create({
-  webrootPath: '~/letsencrypt/srv/www/:hostname/.well-known/acme-challenge'
+  webrootPath: '~/letsencrypt/srv/www/:hostname/.well-known/acme-challenge'   // defaults to os.tmpdir()
+, loopbackPort: 5001                                                          // defaults to 80
+, loopbackTimeout: 3000                                                       // defaults to 3000ms
 , debug: false
 });
 

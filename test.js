@@ -59,7 +59,8 @@ function loopbackTest() {
     var port = server.address().port;
 
     opts.webrootPath = webrootPath;
-    opts.test = port;
+    opts.loopbackPort = port;
+    opts.loopbackTimeout = 500;
     challenge.test(opts, 'localhost', 'foo', 'bar', function (err) {
       server.close();
       if (err) { console.error(err.stack); return; }
