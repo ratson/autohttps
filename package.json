@@ -11,15 +11,21 @@
     "url": "git+https://github.com/Daplie/le-challenge-fs.git"
   },
   "keywords": [
-    "le",
-    "letsencrypt",
-    "le-challenge",
-    "le-challenge-",
     "acme",
     "challenge",
-    "fs",
     "cluster",
-    "ephemeral"
+    "ephemeral",
+    "fs",
+    "http",
+    "http-01",
+    "le",
+    "le-challenge",
+    "le-challenge-",
+    "le-challenge-fs",
+    "le-challenge-http",
+    "le-challenge-webroot",
+    "letsencrypt",
+    "webroot"
   ],
   "author": "AJ ONeal <coolaj86@gmail.com> (https://coolaj86.com/)",
   "license": "(MIT OR Apache-2.0)",
