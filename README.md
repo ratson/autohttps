@@ -29,7 +29,7 @@ npm install --save le-challenge-fs@2.x
 Usage
 -----
 
-```bash
+```js
 var leChallenge = require('le-challenge-fs').create({
   webrootPath: '~/letsencrypt/srv/www/:hostname/.well-known/acme-challenge'   // defaults to os.tmpdir()
 //, loopbackPort: 5001                                                        // defaults to 80
