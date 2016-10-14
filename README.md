@@ -60,4 +60,5 @@ For ACME Challenge:
 For node-letsencrypt internals:
 
 * `getOptions()` returns the internal defaults merged with the user-supplied options
-* `loopback(defaults, domain, key, value, done)` test, by external means, that the ACME server's challenge server will succeed
+* `loopback(defaults, domain, key, done)` is like get, but tests externally
+* `test(defaults, domain, key, value, done)` tests `set`, `loopback`, and `remove` so we can be reasonably sure that the ACME server's challenge server will succeed
