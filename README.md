@@ -31,7 +31,7 @@ Usage
 
 ```js
 var leChallenge = require('le-challenge-fs').create({
-  webrootPath: '~/letsencrypt/srv/www/:hostname/.well-known/acme-challenge'   // defaults to os.tmpdir()
+  webrootPath: '~/letsencrypt/srv/www/:hostname/.well-known/acme-challenge'   // defaults to os.tmpdir() + '/' + 'acme-challenge'
 //, loopbackPort: 5001                                                        // defaults to 80
 , loopbackTimeout: 3000                                                       // defaults to 3000ms
 , debug: false
