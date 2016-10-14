@@ -32,7 +32,7 @@ Usage
 ```bash
 var leChallenge = require('le-challenge-fs').create({
   webrootPath: '~/letsencrypt/srv/www/:hostname/.well-known/acme-challenge'   // defaults to os.tmpdir()
-, loopbackPort: 5001                                                          // defaults to 80
+//, loopbackPort: 5001                                                        // defaults to 80
 , loopbackTimeout: 3000                                                       // defaults to 3000ms
 , debug: false
 });
