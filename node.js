@@ -9,7 +9,7 @@ var defaults = {
   productionServerUrl:    'https://acme-v01.api.letsencrypt.org/directory'
 , stagingServerUrl:       'https://acme-staging.api.letsencrypt.org/directory'
 , acmeChallengePrefix:    '/.well-known/acme-challenge/'
-, knownEndpoints:         [ 'new-authz', 'new-cert', 'new-reg', 'revoke-cert' ]
+, knownEndpoints:         [ 'new-authz', 'new-cert', 'new-reg', 'revoke-cert', 'key-change' ]
 , challengeType:          'http-01'
 , rsaKeySize:             2048
 };
