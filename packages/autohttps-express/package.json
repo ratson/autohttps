@@ -1,0 +1,47 @@
+{
+  "name": "greenlock-express",
+  "version": "2.0.9",
+  "description": "Free SSL and managed or automatic HTTPS for node.js with Express, Koa, Connect, Hapi, and all other middleware systems.",
+  "main": "lex.js",
+  "directories": {
+    "example": "examples"
+  },
+  "dependencies": {
+    "le-challenge-fs": "^2.0.4",
+    "le-sni-auto": "^2.0.1",
+    "le-store-certbot": "^2.0.3",
+    "greenlock": "^2.1.9",
+    "localhost.daplie.com-certificates": "^1.2.3",
+    "redirect-https": "^1.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node examples/serve.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.daplie.com/Daplie/greenlock-express"
+  },
+  "keywords": [
+    "acme",
+    "cloud",
+    "cluster",
+    "free",
+    "greenlock",
+    "https",
+    "le",
+    "letsencrypt",
+    "multi-core",
+    "node",
+    "node.js",
+    "scale",
+    "ssl",
+    "tls"
+  ],
+  "author": "AJ ONeal <aj@daplie.com> (https://daplie.com/)",
+  "license": "(MIT OR Apache-2.0)",
+  "bugs": {
+    "url": "https://git.daplie.com/Daplie/greenlock-express/issues"
+  },
+  "homepage": "https://git.daplie.com/Daplie/greenlock-express#readme"
+}
