@@ -1,6 +1,5 @@
 'use strict';
 
-//require('greenlock-express')
 require('../').create({
 
   server: 'staging'

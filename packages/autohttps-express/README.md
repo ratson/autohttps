@@ -1,30 +1,5 @@
-<!-- BANNER_TPL_BEGIN -->
-
-About Daplie: We're taking back the Internet!
---------------
-
-Down with Google, Apple, and Facebook!
-
-We're re-decentralizing the web and making it read-write again - one home cloud system at a time.
-
-Tired of serving the Empire? Come join the Rebel Alliance:
-
-<a href="mailto:jobs@daplie.com">jobs@daplie.com</a> | [Invest in Daplie on Wefunder](https://daplie.com/invest/) | [Pre-order Cloud](https://daplie.com/preorder/), The World's First Home Server for Everyone
-
-<!-- BANNER_TPL_END -->
-
-greenlock-express (letsencrypt-express)
+autohttps-express
 =================
-
-[![Join the chat at https://gitter.im/Daplie/letsencrypt-express](https://badges.gitter.im/Daplie/letsencrypt-express.svg)](https://gitter.im/Daplie/letsencrypt-express?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-| [greenlock (lib)](https://git.daplie.com/Daplie/node-greenlock)
-| [greenlock-cli](https://git.daplie.com/Daplie/greenlock-cli)
-| **greenlock-express**
-| [greenlock-cluster](https://git.daplie.com/Daplie/greenlock-cluster)
-| [greenlock-koa](https://git.daplie.com/Daplie/greenlock-koa)
-| [greenlock-hapi](https://git.daplie.com/Daplie/greenlock-hapi)
-|
 
 Free SSL and managed or automatic HTTPS for node.js with Express, Koa, Connect, Hapi, and all other middleware systems.
 
@@ -40,10 +15,8 @@ Install
 =======
 
 ```bash
-npm install --save greenlock-express@2.x
+npm install autohttps-express --save
 ```
-
-**Important**: Use node v4.5+ or v6.x, node <= v4.4 has a [known bug](https://github.com/nodejs/node/issues/8053) in the `Buffer` implementation.
 
 QuickStart
 ==========
@@ -54,7 +27,7 @@ Here's a completely working example that will get you started:
 ```javascript
 'use strict';
 
-require('greenlock-express').create({
+require('autohttps-express').create({
 
   server: 'staging'
 
@@ -83,7 +56,7 @@ Why You Must Use 'staging' First
 
 There are a number of common problems related to system configuration -
 firewalls, ports, permissions, etc - that you are likely to run up against
-when using greenlock for your first time.
+when using `autohttps` for your first time.
 
 In order to avoid being blocked by hitting rate limits with bad requests,
 you should always test against the `'staging'` server
@@ -114,8 +87,8 @@ now here's the switch:
 ```javascript
 'use strict';
 
-// returns an instance of node-greenlock with additional helper methods
-var lex = require('greenlock-express').create({
+// returns an instance of `autohttps` with additional helper methods
+var lex = require('autohttps-express').create({
   // set to https://acme-v01.api.letsencrypt.org/directory in production
   server: 'staging'
 
@@ -188,15 +161,15 @@ API
 
 This module is an elaborate ruse (to provide an oversimplified example and to nab some SEO).
 
-The API is actually located at [node-greenlock options](https://git.daplie.com/Daplie/node-greenlock)
-(because all options are simply passed through to `node-greenlock` proper without modification).
+The API is actually located at [autohttps options](https://github.com/ratson/autohttps/tree/master/packages/autohttps)
+(because all options are simply passed through to `autohttps` proper without modification).
 
-The only "API" consists of two options, the rest is just a wrapper around `node-greenlock` to take LOC from 15 to 5:
+The only "API" consists of two options, the rest is just a wrapper around `autohttps` to take LOC from 15 to 5:
 
 * `opts.app` An express app in the format `function (req, res) { ... }` (no `next`).
 * `lex.listen(plainPort, tlsPort)` Accepts port numbers (or arrays of port numbers) to listen on.
 
-Brief overview of some simple options for `node-greenlock`:
+Brief overview of some simple options for `autohttps`:
 
 * `opts.server` set to https://acme-v01.api.letsencrypt.org/directory in production
 * `opts.email` The default email to use to accept agreements.

@@ -1,6 +1,5 @@
 'use strict';
 
-//var le = require('greenlock');
 var LE = require('../');
 var db = {};
 

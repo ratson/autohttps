@@ -1,6 +1,6 @@
 {
-  "name": "greenlock-express",
-  "version": "2.0.9",
+  "name": "autohttps-express",
+  "version": "0.0.0",
   "description": "Free SSL and managed or automatic HTTPS for node.js with Express, Koa, Connect, Hapi, and all other middleware systems.",
   "main": "lex.js",
   "directories": {
@@ -10,7 +10,7 @@
     "le-challenge-fs": "^2.0.4",
     "le-sni-auto": "^2.0.1",
     "le-store-certbot": "^2.0.3",
-    "greenlock": "^2.1.9",
+    "autohttps": "^0.0.0",
     "localhost.daplie.com-certificates": "^1.2.3",
     "redirect-https": "^1.1.0"
   },
@@ -18,16 +18,13 @@
   "scripts": {
     "test": "node examples/serve.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://git.daplie.com/Daplie/greenlock-express"
-  },
+  "repository": "https://github.com/ratson/autohttps-express/tree/master/packages/autohttps-express",
   "keywords": [
     "acme",
     "cloud",
     "cluster",
     "free",
-    "greenlock",
+    "autohttps",
     "https",
     "le",
     "letsencrypt",
@@ -38,10 +35,6 @@
     "ssl",
     "tls"
   ],
-  "author": "AJ ONeal <aj@daplie.com> (https://daplie.com/)",
-  "license": "(MIT OR Apache-2.0)",
-  "bugs": {
-    "url": "https://git.daplie.com/Daplie/greenlock-express/issues"
-  },
-  "homepage": "https://git.daplie.com/Daplie/greenlock-express#readme"
+  "author": "Ratson",
+  "license": "(MIT OR Apache-2.0)"
 }

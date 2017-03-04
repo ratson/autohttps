@@ -26,7 +26,7 @@ var baseUrl;
 // could use localhost as well, but for the sake of an FQDN for testing, we use this
 // also, example.com is just a junk domain to make sure that it is ignored
 // (even though it should always be an array of only one element in lib/core.js)
-var domains = [ 'localhost.daplie.com', 'example.com' ]; // or just localhost
+var domains = [ 'localhost', 'example.com' ];
 var token = 'token-id';
 var secret = 'key-secret';
 

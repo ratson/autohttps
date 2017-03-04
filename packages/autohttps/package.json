@@ -1,17 +1,14 @@
 {
-  "name": "greenlock",
-  "version": "2.1.12",
+  "name": "autohttps",
+  "version": "0.0.0",
   "description": "Let's Encrypt for node.js on npm",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://git.daplie.com/Daplie/node-greenlock"
-  },
+  "repository": "https://github.com/ratson/autohttps/tree/master/packages/autohttps",
   "keywords": [
-    "greenlock",
+    "autohttps",
     "letsencrypt",
     "letsencrypt.org",
     "le",
@@ -24,12 +21,8 @@
     "node.js",
     "client"
   ],
-  "author": "AJ ONeal <coolaj86@gmail.com> (https://coolaj86.com/)",
+  "author": "Ratson",
   "license": "(MIT OR Apache-2.0)",
-  "bugs": {
-    "url": "https://git.daplie.com/Daplie/node-greenlock/issues"
-  },
-  "homepage": "https://git.daplie.com/Daplie/node-greenlock#readme",
   "devDependencies": {
     "request": "^2.75.0"
   },
