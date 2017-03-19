@@ -1,19 +1,19 @@
 'use strict';
 
-require('../').create({
+require('../')
+  .create({
+    server: 'staging',
 
-  server: 'staging'
+    email: 'john.doe@example.com',
 
-, email: 'john.doe@example.com'
+    agreeTos: true,
 
-, agreeTos: true
+    approvedDomains: ['example.com', 'www.example.com'],
 
-, approvedDomains: [ 'example.com', 'www.example.com' ]
+    app: require('express')().use('/', function(req, res) {
+      res.end('Hello, World!');
+    }),
 
-, app: require('express')().use('/', function (req, res) {
-    res.end('Hello, World!');
+    debug: true,
   })
-
-, debug: true
-
-}).listen(80, 443);
+  .listen(80, 443);
