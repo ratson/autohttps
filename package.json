@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "prettier": "prettier --single-quote --trailing-comma es5 --write 'packages/*/{examples,lib,tests}/*.js'"
+    "prettier": "prettier --single-quote --trailing-comma es5 --write 'packages/*/{.,examples,lib,tests}/*.js'"
   },
   "devDependencies": {
     "lerna": "2.0.0-beta.30",
