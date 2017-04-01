@@ -1,1 +1,1 @@
-throw new Error("NOT IMPLEMENTED");
+throw new Error('NOT IMPLEMENTED');
