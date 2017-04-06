@@ -1,6 +1,6 @@
 {
-  "name": "le-sni-auto",
-  "version": "2.1.0",
+  "name": "autohttps-sni-auto",
+  "version": "0.0.0",
   "description": "An auto-sni strategy for registering and renewing letsencrypt certificates using SNICallback",
   "main": "index.js",
   "dependencies": {
@@ -10,10 +10,7 @@
   "scripts": {
     "test": "node test.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Daplie/le-sni-auto.git"
-  },
+  "repository": "https://github.com/ratson/autohttps/tree/master/packages/autohttps-sni-auto",
   "keywords": [
     "le-sni",
     "le-sni-",
@@ -23,10 +20,9 @@
     "letsencrypt",
     "certbot"
   ],
-  "author": "AJ ONeal <coolaj86@gmail.com> (https://coolaj86.com/)",
+  "author": "Ratson",
   "license": "(MIT OR Apache-2.0)",
-  "bugs": {
-    "url": "https://github.com/Daplie/le-sni-auto/issues"
-  },
-  "homepage": "https://github.com/Daplie/le-sni-auto#readme"
+  "engines": {
+    "node": ">=4"
+  }
 }

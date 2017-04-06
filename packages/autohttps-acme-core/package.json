@@ -1,6 +1,6 @@
 {
-  "name": "le-acme-core",
-  "version": "2.0.9",
+  "name": "autohttps-acme-core",
+  "version": "0.0.0",
   "description": "A framework for building letsencrypt clients, forked from letiny",
   "main": "node.js",
   "browser": "browser.js",
@@ -11,15 +11,8 @@
   "scripts": {
     "test": "node example/letsencrypt.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://git.daplie.com/Daplie/le-acme-core.git"
-  },
+  "repository": "https://github.com/ratson/autohttps/tree/master/packages/autohttps-acme-core",
   "license": "MPL-2.0",
-  "bugs": {
-    "url": "https://git.daplie.com/Daplie/le-acme-core/issues"
-  },
-  "homepage": "https://git.daplie.com/Daplie/le-acme-core#readme",
   "keywords": [
     "le-acme",
     "le-acme-",
@@ -34,5 +27,8 @@
   "dependencies": {
     "request": "^2.74.0",
     "rsa-compat": "^1.2.7"
+  },
+  "engines": {
+    "node": ">=4"
   }
 }

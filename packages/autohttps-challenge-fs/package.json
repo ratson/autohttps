@@ -1,15 +1,12 @@
 {
-  "name": "le-challenge-fs",
-  "version": "2.0.8",
+  "name": "autohttps-challenge-fs",
+  "version": "0.0.0",
   "description": "A fs-based strategy for node-letsencrypt for setting, retrieving, and clearing ACME challenges issued by the ACME server",
   "main": "index.js",
   "scripts": {
     "test": "node test.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Daplie/le-challenge-fs.git"
-  },
+  "repository": "https://github.com/ratson/autohttps/tree/master/packages/autohttps-challenge-fs",
   "keywords": [
     "acme",
     "challenge",
@@ -27,17 +24,16 @@
     "letsencrypt",
     "webroot"
   ],
-  "author": "AJ ONeal <coolaj86@gmail.com> (https://coolaj86.com/)",
+  "author": "Ratson",
   "license": "(MIT OR Apache-2.0)",
-  "bugs": {
-    "url": "https://github.com/Daplie/le-challenge-fs/issues"
-  },
-  "homepage": "https://github.com/Daplie/le-challenge-fs#readme",
   "dependencies": {
     "mkdirp": "^0.5.1"
   },
   "devDependencies": {
     "finalhandler": "^0.5.0",
     "serve-static": "^1.11.1"
+  },
+  "engines": {
+    "node": ">=4"
   }
 }

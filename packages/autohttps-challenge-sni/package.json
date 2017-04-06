@@ -1,15 +1,12 @@
 {
-  "name": "le-challenge-sni",
-  "version": "2.0.1",
+  "name": "autohttps-challenge-sni",
+  "version": "0.0.0",
   "description": "A strategy for node-letsencrypt for setting, retrieving, and clearing ACME challenges by registering self-signed certs with the SNI handler.",
   "main": "index.js",
   "scripts": {
     "test": "node test.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/insightfuls/le-challenge-sni.git"
-  },
+  "repository": "https://github.com/ratson/autohttps/tree/master/packages/autohttps-challenge-sni",
   "keywords": [
     "le-challenge",
     "le-challenge-",
@@ -20,13 +17,12 @@
     "letsencrypt",
     "certbot"
   ],
-  "author": "Ben Schmidt",
+  "author": "Ratson",
   "license": "(MIT OR Apache-2.0)",
-  "bugs": {
-    "url": "https://github.com/insightfuls/le-challenge-sni/issues"
-  },
-  "homepage": "https://github.com/insightfuls/le-challenge-sni#readme",
   "dependencies": {
     "le-tls-sni": "^0.1.0"
+  },
+  "engines": {
+    "node": ">=4"
   }
 }
